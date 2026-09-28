@@ -1,7 +1,7 @@
 # lectuer17-2569-starter — React Hook Form + Zod
 
 ---
-
+## คู่มือ : https://ui.shadcn.com/docs/forms/react-hook-form
 ## ขั้นตอนที่ 12: ติดตั้ง
 
 ### 12.1 ติดตั้ง dependency เดิมของโปรเจกต์
