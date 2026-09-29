@@ -29,114 +29,128 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEnrollmentStore } from "@/lib/enrollment-store";
-import {
-  emptyStudentForm,
-  validateStudentField,
-  validateStudentForm,
-  type StudentFormErrors,
-  type StudentFormValues,
-} from "@/lib/student-validation";
+// import {
+//   emptyStudentForm,
+//   validateStudentField,
+//   validateStudentForm,
+//   type StudentFormErrors,
+//   type StudentFormValues,
+// } from "@/lib/student-validation";
+
+import { AddNewStudentDialog } from "@/components/students/add-new-student-dialog";
+import { interestOptions } from "@/lib/schemas/student-schema";
 
 const programOptions = [
   { value: "CPE", label: "CPE — วิศวกรรมคอมพิวเตอร์" },
   { value: "ISNE", label: "ISNE — วิศวกรรมระบบสารสนเทศและเครือข่าย" },
 ];
+const interestLabel = (id: string) =>
+  interestOptions.find((o) => o.id === id)?.label ?? id;
+
 
 export default function AdminStudentsPage() {
   const { students, addStudent, removeStudent } = useEnrollmentStore();
 
   // (1)(2)(3) state ที่ต้องถือเองสามก้อน
-  const [values, setValues] = useState<StudentFormValues>(emptyStudentForm);
-  const [errors, setErrors] = useState<StudentFormErrors>({});
-  const [touched, setTouched] = useState<
-    Partial<Record<keyof StudentFormValues, boolean>>
-  >({});
+  // const [values, setValues] = useState<StudentFormValues>(emptyStudentForm);
+  // const [errors, setErrors] = useState<StudentFormErrors>({});
+  // const [touched, setTouched] = useState<
+  //   Partial<Record<keyof StudentFormValues, boolean>>
+  // >({});
 
-  // (4) ตรวจช่องเดียว แล้วอัปเดต errors เฉพาะช่องนั้น
-  const checkField = (
-    name: keyof StudentFormValues,
-    next: StudentFormValues,
-  ) => {
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validateStudentField(name, next, students),
-    }));
-  };
+  // // (4) ตรวจช่องเดียว แล้วอัปเดต errors เฉพาะช่องนั้น
+  // const checkField = (
+  //   name: keyof StudentFormValues,
+  //   next: StudentFormValues,
+  // ) => {
+  //   setErrors((prev) => ({
+  //     ...prev,
+  //     [name]: validateStudentField(name, next, students),
+  //   }));
+  // };
 
-  const handleChange = (name: keyof StudentFormValues, value: string) => {
-    const next = { ...values, [name]: value };
-    setValues(next);
-    // ช่องที่เคยออกไปแล้ว (touched) ให้เช็กใหม่ทันทีตอนแก้ — error จะหายเมื่อแก้ถูก
-    if (touched[name]) checkField(name, next);
-  };
+  // const handleChange = (name: keyof StudentFormValues, value: string) => {
+  //   const next = { ...values, [name]: value };
+  //   setValues(next);
+  //   // ช่องที่เคยออกไปแล้ว (touched) ให้เช็กใหม่ทันทีตอนแก้ — error จะหายเมื่อแก้ถูก
+  //   if (touched[name]) checkField(name, next);
+  // };
 
-  // เทียบได้กับ mode: "onBlur" — เช็กตอนออกจากช่อง ไม่กวนระหว่างพิมพ์
-  const handleBlur = (name: keyof StudentFormValues) => {
-    setTouched((prev) => ({ ...prev, [name]: true }));
-    checkField(name, values);
-  };
+  // // เทียบได้กับ mode: "onBlur" — เช็กตอนออกจากช่อง ไม่กวนระหว่างพิมพ์
+  // const handleBlur = (name: keyof StudentFormValues) => {
+  //   setTouched((prev) => ({ ...prev, [name]: true }));
+  //   checkField(name, values);
+  // };
 
-  // (7) ด่านตรวจก่อนเข้า store
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const nextErrors = validateStudentForm(values, students);
-    setErrors(nextErrors);
-    setTouched({
-      studentId: true,
-      firstName: true,
-      lastName: true,
-      program: true,
-    });
-    if (Object.keys(nextErrors).length > 0) return; // ไม่ผ่าน → ไม่เรียก addStudent
+  // // (7) ด่านตรวจก่อนเข้า store
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   const nextErrors = validateStudentForm(values, students);
+  //   setErrors(nextErrors);
+  //   setTouched({
+  //     studentId: true,
+  //     firstName: true,
+  //     lastName: true,
+  //     program: true,
+  //   });
+  //   if (Object.keys(nextErrors).length > 0) return; // ไม่ผ่าน → ไม่เรียก addStudent
 
-    addStudent({
-      studentId: values.studentId.trim(),
-      firstName: values.firstName.trim(),
-      lastName: values.lastName.trim(),
-      program: values.program as "CPE" | "ISNE", // ต้อง cast เอง (Zod infer ให้)
-    });
-    setValues(emptyStudentForm);
-    setErrors({});
-    setTouched({});
-  };
+  //   addStudent({
+  //     studentId: values.studentId.trim(),
+  //     firstName: values.firstName.trim(),
+  //     lastName: values.lastName.trim(),
+  //     program: values.program as "CPE" | "ISNE", // ต้อง cast เอง (Zod infer ให้)
+  //   });
+  //   setValues(emptyStudentForm);
+  //   setErrors({});
+  //   setTouched({});
+  // };
 
-  // หัวข้อที่ 6 (Before): เรียก addStudent ตัวเดียวกันแต่ "ไม่มีด่านตรวจ"
-  const handleAddWithoutValidate = () => {
-    addStudent({
-      studentId: "65061",
-      firstName: "Garbage",
-      lastName: "",
-      program: "CPE",
-    });
-  };
+  // // หัวข้อที่ 6 (Before): เรียก addStudent ตัวเดียวกันแต่ "ไม่มีด่านตรวจ"
+  // const handleAddWithoutValidate = () => {
+  //   addStudent({
+  //     studentId: "65061",
+  //     firstName: "Garbage",
+  //     lastName: "",
+  //     program: "CPE",
+  //   });
+  // };
 
-  // (5)(6) ต้องต่อ id / aria-* / ข้อความ error เองทุกช่อง
-  const errorOf = (name: keyof StudentFormValues) =>
-    touched[name] ? errors[name] : undefined;
+  // // (5)(6) ต้องต่อ id / aria-* / ข้อความ error เองทุกช่อง
+  // const errorOf = (name: keyof StudentFormValues) =>
+  //   touched[name] ? errors[name] : undefined;
 
-  const fieldError = (name: keyof StudentFormValues) => {
-    const message = errorOf(name);
-    return message ? (
-      <p id={`${name}-error`} className="text-sm text-destructive">
-        {message}
-      </p>
-    ) : null;
-  };
+  // const fieldError = (name: keyof StudentFormValues) => {
+  //   const message = errorOf(name);
+  //   return message ? (
+  //     <p id={`${name}-error`} className="text-sm text-destructive">
+  //       {message}
+  //     </p>
+  //   ) : null;
+  // };
 
-  const invalidProps = (name: keyof StudentFormValues) => ({
-    "aria-invalid": errorOf(name) ? true : undefined,
-    "aria-describedby": errorOf(name) ? `${name}-error` : undefined,
-  });
+  // const invalidProps = (name: keyof StudentFormValues) => ({
+  //   "aria-invalid": errorOf(name) ? true : undefined,
+  //   "aria-describedby": errorOf(name) ? `${name}-error` : undefined,
+  // });
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-2">
       <div>
         <h1 className="text-xl font-semibold">จัดการนักศึกษา</h1>
         <p className="text-sm text-muted-foreground">
-          Lecture 17 (Starter): รับข้อมูลและตรวจสอบก่อนเข้าสู่ระบบ — Validate
-          แบบเขียนเอง ยังไม่ใช้ Zod / React Hook Form
+          {students.length} คน — Lecture 17: รับข้อมูลและตรวจสอบก่อนเข้าสู่ระบบ
         </p>
       </div>
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" onClick={AddNewStudentDialog}>
+          <FlaskConical className="h-4 w-4" />
+          จำลองข้อมูลจากฟอร์ม (ไม่ Validate)
+        </Button>
+        <AddNewStudentDialog />
+      </div>
+    </div>
 
       <Card>
         <CardHeader>
@@ -146,7 +160,7 @@ export default function AdminStudentsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} noValidate className="grid gap-4">
+          {/* <form onSubmit={handleSubmit} noValidate className="grid gap-4">
             <div className="grid gap-1.5">
               <Label htmlFor="studentId">รหัสนักศึกษา</Label>
               <Input
@@ -234,7 +248,7 @@ export default function AdminStudentsPage() {
                 จำลองข้อมูลจากฟอร์ม (ไม่ Validate)
               </Button>
             </div>
-          </form>
+          </form> */}
         </CardContent>
       </Card>
 
@@ -246,6 +260,9 @@ export default function AdminStudentsPage() {
               <TableHead>ชื่อ</TableHead>
               <TableHead>นามสกุล</TableHead>
               <TableHead>หลักสูตร</TableHead>
+              <TableHead>ความสนใจ</TableHead>
+              <TableHead>อีเมล</TableHead>
+              <TableHead>วิชาที่ลงทะเบียน</TableHead>
               <TableHead className="w-12" />
             </TableRow>
           </TableHeader>
@@ -259,6 +276,35 @@ export default function AdminStudentsPage() {
                   {s.lastName || <Badge variant="destructive">ว่างเปล่า</Badge>}
                 </TableCell>
                 <TableCell>{s.program}</TableCell>
+                <TableCell>
+                  <div className="flex flex-wrap gap-1">
+                    {s.interests?.length ? (
+                      s.interests.map((id) => (
+                        <Badge key={id} variant="outline">{interestLabel(id)}</Badge>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {s.emails?.length ? (
+                    <div className="flex flex-col gap-0.5 text-sm">
+                      {s.emails.map((e) => <span key={e.address}>{e.address}</span>)}
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </TableCell>
+                {/* <TableCell>
+                  <div className="flex flex-wrap gap-1">
+                    {enrollments
+                      .filter((e) => e.studentId === s.studentId)
+                      .map((e) => (
+                        <Badge key={e.courseId} variant="secondary">{e.courseId}</Badge>
+                      ))}
+                  </div>
+                </TableCell> */}
                 <TableCell>
                   <ConfirmDeleteButton
                     label={`ลบ ${s.studentId}`}

@@ -15,6 +15,11 @@ export default function HomePage() {
             ไปหน้าจัดการการลงทะเบียน
           </Button>
         </CardContent>
+        <CardContent className="space-y-4">
+          <Button render={<Link to="/admin/students" />}>
+            ไปหน้าจัดการข้อมูลนักศึกษา
+          </Button>
+        </CardContent>
       </Card>
     </div>
   );

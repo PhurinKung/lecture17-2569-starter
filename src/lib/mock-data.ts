@@ -6,6 +6,8 @@ export const students: Student[] = [
     firstName: "Matt",
     lastName: "Damon",
     program: "CPE",
+    interests: ["web", "mobile"],
+    emails: [{ address: "matt.damon@cmu.ac.th" }],
   },
   {
     studentId: "650610002",
@@ -13,6 +15,11 @@ export const students: Student[] = [
     lastName: "Murphy",
     program: "CPE",
     courses: ["261207", "261497"],
+    interests: ["ai"],
+    emails: [
+      { address: "cillian.murphy@cmu.ac.th" },
+      { address: "cillian.m@gmail.com" },
+    ],
   },
   {
     studentId: "650610003",
@@ -20,6 +27,8 @@ export const students: Student[] = [
     lastName: "Blunt",
     program: "ISNE",
     courses: ["269101", "261497"],
+    interests: ["network", "web", "ai"],
+    emails: [{ address: "emily.blunt@cmu.ac.th" }],
   },
 ];
 

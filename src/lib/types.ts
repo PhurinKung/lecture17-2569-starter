@@ -4,8 +4,17 @@ interface Student {
   lastName: string;
   program: "CPE" | "ISNE";
   courses?: string[];
+  // ความสนใจ (id จาก interestOptions) — optional เพราะข้อมูลที่ persist ไว้ก่อนหน้าอาจยังไม่มี
+  interests?: string[];
+  // อีเมลของนักศึกษา (หลายอีเมลได้)
+  emails?: StudentEmail[];
 }
 export type { Student };
+
+interface StudentEmail {
+  address: string;
+}
+export type { StudentEmail };
 
 interface Course {
   courseId: string;
